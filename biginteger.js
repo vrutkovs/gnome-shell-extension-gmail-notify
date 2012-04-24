@@ -111,6 +111,7 @@ function BigInteger(n, s) {
     }
     this._d = n;
     this._s = n.length ? (s || 1) : 0;
+    return null;
 }
 
 // Base-10 speedup hacks in parse, toString, exp10 and log functions
