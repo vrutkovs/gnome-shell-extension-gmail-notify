@@ -256,7 +256,7 @@ Imap.prototype= {
                                                     m.set("id",parseInt(idmatches[1]));
                                                     let ba=BigInteger.BigInteger.parse(idmatches[2]);
                                                     Logger.log(ba.toString(16));
-                                                    m.set("link",'https://mail.google.com/mail/u/0/#all/'+ba.toString(16).toLowerCase());
+                                                    m.set("link",'https://mail.google.com/mail/u/0/#inbox/'+ba.toString(16).toLowerCase());
                                                 }
                                                 catch (err) {
                                                     Logger.log(err.message);
