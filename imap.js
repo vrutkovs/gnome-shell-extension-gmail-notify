@@ -66,23 +66,24 @@ ImapMessage.prototype = {
 var Imap = function () {
     this._init.apply(this,arguments);
 };
-Imap.prototype= {
+Imap.prototype = {
     _init : function (conn) {
-        this._conn=conn;
-        this.authenticated=false;
-        this.folders=new Array();
+        this._conn = conn;
+        this.authenticated = false;
+        this.folders = new Array();
     },
     _gen_tag:  function () {
-            let tag="";
-            for (let i=0;i<5;i++) tag+=Math.floor(Math.random()*10).toString();
-            return tag;
+        let tag = "";
+        for (let i = 0; i < 5; i++)
+            tag += Math.floor(Math.random()*10).toString();
+        return tag;
     },
     _commandOK : function(aResp) {
         try {
             let ret=false ;
             if (aResp !=null) {
-                for (let i=0;i<aResp.length;i++) {
-                    if (aResp[i].search(/^[0-9]{5} OK.*$/)>-1)
+                for (let response in aResp) {
+                    if (response.search(/^[0-9]{5} OK.*$/)>-1)
                     {
                         ret = true;
                         break;
@@ -118,8 +119,8 @@ Imap.prototype= {
                     if (decode){
                         let matches=read[i].match(/&.*-/g);
                         if (matches != null){
-                            for (let j=0;j<matches.length;j++) {
-                                    let dec=GLib.base64_decode(matches[j].substr(1,matches[j].length-2)+"="+(matches[j].length % 2 ==0 ? "=":""));
+                            for (let match in matches) {
+                                    let dec=GLib.base64_decode(match.substr(1,match.length-2)+"="+(match.length % 2 ==0 ? "=":""));
                                     let us="";
                                     for(let k=0;k<dec.length;k+=2){
                                         us+=String.fromCharCode(dec[k]*256+dec[k+1]);
@@ -148,7 +149,7 @@ Imap.prototype= {
             let tag=this._gen_tag();
             this._output_stream.put_string(tag+" LOGOUT"+_newline,null);
             this._readBuffer(tag,false,true,Lang.bind(this,function(oImap,resp){
-                for (let i=0;i<resp.length;i++) Logger.log(resp[i]);
+                for (let response in resp) Logger.log(response);
                 this.emit('logged out',resp);
             }));
         }
@@ -184,8 +185,8 @@ Imap.prototype= {
             //get number of total and unseen
             let sTotal=0;
             let sUnseen=0;
-            for (let i=0;i<resp.length;i++) {
-                let tmatch=resp[i].match (/\* ([0-9]+) EXISTS.*/);
+            for (let response in resp) {
+                let tmatch=response.match (/\* ([0-9]+) EXISTS.*/);
                 if (tmatch!=null) {
                      Logger.log ("-- TOTAL "+tmatch[1]);
                      sTotal=parseInt(tmatch[1]);
@@ -201,7 +202,7 @@ Imap.prototype= {
                     {
                         Logger.log("xmatches"+xmatches);
                         sUnseen=xmatches[0].split(" ").length;
-                        for (let l=0;l<xmatches.length;l++) { Logger.log (xmatches[l]) }
+                        for (let xmatch in xmatches) { Logger.log (xmatch) }
                         Logger.log("FETCH");
                         this._command("FETCH "+xmatches[0].replace(/ /g,",")+" (FLAGS BODY.PEEK[HEADER.FIELDS (DATE FROM SUBJECT)] X-GM-MSGID)",false, Lang.bind(this,function(oImap,presp)
                             {  try {

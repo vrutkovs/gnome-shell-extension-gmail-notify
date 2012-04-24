@@ -134,7 +134,7 @@ GmailImap.prototype= {
         }
     },
     
-    _doauthenticate : function (account,service,callback) {
+    _doauthenticate : function (account, service, callback) {
         Logger.log("GmailImap._doauthenicate")
         try {
             let oAuth = new OAuth.OAuth(account,service);
@@ -142,8 +142,8 @@ GmailImap.prototype= {
             this._command("AUTHENTICATE XOAUTH " + auth_str,
                             false,
                             Lang.bind(this, function (oGIMap,resp) {
-                                for (let i = 0; i<resp.length; i++)
-                                    Logger.log(resp[i]);
+                                for (let response in resp)
+                                    Logger.log(response);
                                 if (this._commandOK(resp)){
                                     this.authenticated = true;
                                     this._conn.newline = String.fromCharCode(13)+String.fromCharCode(10);

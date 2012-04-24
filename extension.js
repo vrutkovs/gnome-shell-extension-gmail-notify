@@ -49,7 +49,7 @@ const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const Logger = Extension.imports.logger;
 const Gmail = Extension.imports.gmail;
 const Imap = Extension.imports.imap;
-
+const Lib = Extension.imports.lib;
 
 // Constants
 const CHECK_TIMEOUT = 300;
@@ -75,7 +75,6 @@ var config = null;
 var bText = null
 // List of goa accounts
 var goaAccounts = Array(0);
-
 
 // GMail notification on new messages - sourcce
 function GmailNotificationSource() {
@@ -155,13 +154,13 @@ GmailNotification.prototype = {
 };
 
 // GMail notification on new message - notification trigger
-function _mailNotify(content) {
+function _mailNotify(contents) {
     Logger.log("_mailNotify start");
     let source = new GmailNotificationSource();
     Main.messageTray.add(source);
 
-    for (let i=0; i<content.length; i++){
-        let notification = new GmailNotification(source, content[i]);
+    for (let content in contents){
+        let notification = new GmailNotification(source, content);
         notification.setTransient(true);
         source.notify(notification);
     }
@@ -170,9 +169,9 @@ function _mailNotify(content) {
 // Check inbox for all accounts trigger
 function checkInboxForAllAccounts() {
     Logger.log("checkInbox start");
-    for (let i = 0; i < goaAccounts.length; i++) {
-        Logger.log("Inbox check for " + goaAccounts[i]._conn._oMail.imap_user_name);
-        goaAccounts[i].scanInbox();
+    for (let account in goaAccounts) {
+        Logger.log("Inbox check for " + account._conn._oMail.imap_user_name);
+        account.scanInbox();
     }
     return true;
 };
@@ -189,14 +188,14 @@ function _processData(oImap,resp,error) {
 
     let totalMessages = 0;
     let unreadMessages = 0;
-    for (let i=0; i<oImap.folders.length; i++){
-        unreadMessages += oImap.folders[i].unseen;
-        totalMessages += oImap.folders[i].messages;
-        for (let j=0; j<oImap.folders[i].list.length; j++){
-            if (oImap.folders[i].list[j].id > maxId)
-                maxId = oImap.folders[i].list[j].id;
-            if (oImap.folders[i].list[j].safeid > maxSafeId)
-                maxSafeId = oImap.folders[i].list[j].safeid;
+    for (let folder in oImap.folders){
+        unreadMessages += folder.unseen;
+        totalMessages += folders.messages;
+        for (let element in folder.list){
+            if (element.id > maxId)
+                maxId = subfolder.id;
+            if (element.safeid > maxSafeId)
+                maxSafeId = element.safeid;
         }
     }
     Logger.log("maxSafeId= " +maxSafeId);
@@ -210,14 +209,14 @@ function _processData(oImap,resp,error) {
     Logger.log("entry= " +entry)
 
     if (maxId > entry){
-        for (let i=0;i<oImap.folders.length;i++){
-            var notes=new Array();
-            for (let j=0;j<oImap.folders[i].list.length;j++){
-                if (oImap.folders[i].list[j].id>entry){
-                    notes.push(oImap.folders[i].list[j]);
+        for (let folder in oImap.folders;i++){
+            var notes = new Array();
+            for (let element in folder.list){
+                if (element.id > entry){
+                    notes.push(element);
                 }
             }
-            if (notes.length>0 && config._notify) {
+            if (notes.length > 0 && config._notify) {
                 _mailNotify(notes);
             }
 
@@ -229,7 +228,7 @@ function _processData(oImap,resp,error) {
     Logger.log("Setting Content 0:"+oImap.folders[0].list.length);
     Logger.log("Setting Content 1:"+oImap._conn._oAccount.get_account().identity);
 
-    button.setContent(oImap.folders[0].list,numGoogle,oImap._conn._oAccount.get_account().identity);
+    button.setContent(oImap.folders[0].list, numGoogle, oImap._conn._oAccount.get_account().identity);
     oImap._conn._disconnect();
     button.text.clutter_text.set_markup(bText.format(unreadMessages.toString(), totalMessages.toString()));
     button.setIcon(unreadMessages);
@@ -238,20 +237,16 @@ function _processData(oImap,resp,error) {
 // Initialize mailboxes
 function _initMailboxes() {
     Logger.log("_initMailboxes start");
-    let aClient=Goa.Client.new_sync (null);
+    let aClient = Goa.Client.new_sync (null);
     let accounts = aClient.get_accounts();
 
     Logger.log("Found " + accounts.length + " account(s) in GOA");
 
-    for (let i=0; i < accounts.length; i++) {
-        let account = accounts[i].get_account()
-
+    for (let account in accounts) {
         if ( account.provider_name.toUpperCase() == "GOOGLE") {
-            Logger.log("Account " + i + " ," + "id:" + account.id);
-
-            let goaAccount = new Gmail.GmailImap(accounts[i]);
-            goaAccount.connect('inbox-scanned',_processData);
-            goaAccount.connect('inbox-fed',_processData);
+            let goaAccount = new Gmail.GmailImap(account);
+            goaAccount.connect('inbox-scanned', _processData);
+            goaAccount.connect('inbox-fed', _processData);
 
             goaAccounts.push(goaAccount);
             Logger.log("Added " + account.id + " account");
