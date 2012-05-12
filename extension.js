@@ -209,7 +209,7 @@ function _processData(oImap,resp,error) {
     Logger.log("entry= " +entry)
 
     if (maxId > entry){
-        for (let folder in oImap.folders;i++){
+        for (let folder in oImap.folders){
             var notes = new Array();
             for (let element in folder.list){
                 if (element.id > entry){
