@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions-gmail-notify">
+  <schema path="/org/gnome/shell/extensions/gmail-notify/" id="org.gnome.shell.extensions.gmail-notify">
+    <key type="i" name="position">
+        <default>1</default>
+        <summary>Button position</summary>
+        <description>Extension position, 2 - left, 1 - center, 0 - right</description>
+    </key>
+    <key type="s" name="number-format">
+        <default>"{unread} ({total})"</default>
+        <summary>Button message format</summary>
+        <description>Available replacements: {unread} - number of unread messages, {total} - total number of messages</description>
+    </key>
+    <key type="b" name="notify-on-new-messages">
+        <default>true</default>
+        <summary>Notify about incoming mail</summary>
+        <description>Notify about incoming mail</description>
+    </key>
+    <key type="b" name="use-default-mail-reader">
+        <default>true</default>
+        <summary>Open default mailreader</summary>
+        <description>Open GMail in browser on false, use default mail reader on true</description>
+    </key>
+    <key type="b" name="show-unread-numbers">
+        <default>true</default>
+        <summary>Show number of unread messages</summary>
+        <description>The size of the cover displayed in the menu. Default is 80px width.</description>
+    </key>
+    <key type="i" name="timeout">
+        <default>180</default>
+        <summary>Check interval</summary>
+        <description>Amount of time to check for new messages in seconds</description>
+    </key>
+  </schema>
+</schemalist>
