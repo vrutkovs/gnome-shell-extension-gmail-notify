@@ -103,13 +103,11 @@ Imap.prototype = {
     _readBuffer : function (tag,is_init,decode,callback,read,i) {
             is_init = typeof (is_init) != 'undefined' ? is_init : false;
             decode = typeof (decode) != 'undefined' ? decode : true;
-            if (typeof(read) =='undefined')
-            {
+            if (typeof(read) =='undefined') {
+                i=0;
                 Logger.log ("initializing array .. "+i)
                 read= new Array();
-                i=0;
-            }
-            else {
+            } else {
                 i++
             }
             this._conn.inputStream.read_line_async(0,null,Lang.bind(this,function (stream,result) {
@@ -144,8 +142,7 @@ Imap.prototype = {
             null);
         },
     _logout : function() {
-        if (this.connected)
-        {
+        if (this.connected) {
             let tag=this._gen_tag();
             this._output_stream.put_string(tag+" LOGOUT"+_newline,null);
             this._readBuffer(tag,false,true,Lang.bind(this,function(oImap,resp){
@@ -181,7 +178,7 @@ Imap.prototype = {
         {
         this.folders=new Array();
         this._command("EXAMINE "+folder,true,Lang.bind(this,function(oImap,resp) {
-            //{for (let i=0;i<resp.length;i++) Logger.log("< "+resp[i]);}
+            {for (let i=0;i<resp.length;i++) Logger.log("< "+resp[i]);}
             //get number of total and unseen
             let sTotal=0;
             let sUnseen=0;

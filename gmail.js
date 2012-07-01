@@ -90,7 +90,7 @@ GmailImap.prototype= {
             } else  {
                 let oconn = new GmailConnection(conn);
                 Imap.Imap.prototype._init.call(this,oconn) ;
-                Logger.log("Imap created: .."+this._conn._oAccount.get_account().id);
+                Logger.log("Imap created: "+this._conn._oAccount.get_account().id);
             }
             this.authenticated=false;
             this._conn.connect('disconnected',
@@ -143,7 +143,7 @@ GmailImap.prototype= {
                             false,
                             Lang.bind(this, function (oGIMap,resp) {
                                 for (let response in resp)
-                                    Logger.log(response);
+                                    Logger.log("response: " + resp[response]);
                                 if (this._commandOK(resp)){
                                     this.authenticated = true;
                                     this._conn.newline = String.fromCharCode(13)+String.fromCharCode(10);

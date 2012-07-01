@@ -169,9 +169,9 @@ function _mailNotify(contents) {
 // Check inbox for all accounts trigger
 function checkInboxForAllAccounts() {
     Logger.log("checkInbox start");
-    for (let account in goaAccounts) {
-        Logger.log("Inbox check for " + account._conn._oMail.imap_user_name);
-        account.scanInbox();
+    for (let index in goaAccounts) {
+        Logger.log("Inbox check for " + goaAccounts[index]._conn._oMail.imap_user_name);
+        goaAccounts[index].scanInbox();
     }
     return true;
 };
@@ -241,15 +241,16 @@ function _initMailboxes() {
     let accounts = aClient.get_accounts();
 
     Logger.log("Found " + accounts.length + " account(s) in GOA");
-
-    for (let account in accounts) {
-        if ( account.provider_name.toUpperCase() == "GOOGLE") {
+    for (let index in accounts) {
+        let account = accounts[index]
+        Logger.log("account index " + index + " provider is " + account.get_account().provider_name)
+        if ( account.get_account().provider_name.toUpperCase() == "GOOGLE") {
             let goaAccount = new Gmail.GmailImap(account);
             goaAccount.connect('inbox-scanned', _processData);
             goaAccount.connect('inbox-fed', _processData);
 
             goaAccounts.push(goaAccount);
-            Logger.log("Added " + account.id + " account");
+            Logger.log("Added " + account.get_account().id + " account");
         }
     }
 };
