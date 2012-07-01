@@ -464,11 +464,12 @@ GmailMenuItem.prototype = {
         let dts = '';
         try {
             let dt = new Date(content.date);
-            dts += dt.getFullYear().toString() + "-"
+            /*dts += dt.getFullYear().toString() + "-"
                 +  (dt.getMonth()+1).toString() + "-"
                 +  dt.getDate().toString() + " "
                 +  dt.getHours().toString() + ":"
-                +  dt.getMinutes().toString();
+                +  dt.getMinutes().toString();*/
+            dts = (Date(content.date)).toLocaleString();
         } catch (err) {
             Logger.log('Date converison error in gmail menu item proto');
         }
