@@ -42,7 +42,6 @@ const PopupMenu = imports.ui.popupMenu;
 const PanelMenu = imports.ui.panelMenu;
 const Clutter = imports.gi.Clutter;
 const Soup =  imports.gi.Soup;
-const Goa = imports.gi.Goa;
 
 // Load other classes required by this extension
 const Extension = imports.misc.extensionUtils.getCurrentExtension();
@@ -61,6 +60,8 @@ const _version = "0.4";
 const sSes=new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(sSes,
                                         new Soup.ProxyResolverDefault());
+
+const Goa = imports.gi.Goa;
 
 // GMailButton instance
 var button = null;
@@ -392,7 +393,7 @@ GmailButton.prototype.setContent=function (content, add, mailbox) {
     mailbox = typeof(mailbox) == 'undefined' ? '' : mailbox;
     Logger.log("Gmail set content: 1");
     if (add == 0) {
-        Main.panel._menus.removeMenu(this.menu);
+        Main.panel.menuManager.removeMenu(this.menu);
         this.menu.destroy();
         this.menu = new PopupMenu.PopupMenu(this.actor,
                                             0.0,
@@ -436,7 +437,7 @@ GmailButton.prototype.setContent=function (content, add, mailbox) {
     }
     this.sep = new PopupMenu.PopupSeparatorMenuItem();
     this.menu.addMenuItem(this.sep);
-    Main.panel._menus.addMenu(this.menu);
+    Main.panel.menuManager.addMenu(this.menu);
 }
 
 function GmailMenuItem() {
@@ -688,13 +689,14 @@ GmailConf.prototype = {
 // Show gmail button in the panel box
 function show() {
     let panelPositionbox = null;
+    var pos;
     switch (config._position) {
-        case 0:  panelPositionbox = Main.panel._rightBox;  break;
-        case 1:  panelPositionbox = Main.panel._centerBox; break;
-        case 2:  panelPositionbox = Main.panel._leftBox;   break;
-        default: panelPositionbox = Main.panel._rightBox;  break;
+        case 0: pos = 'right';
+        case 1: pos = 'center';
+        case 2: pos = 'left';
+        default: pos = 'right';
     }
-    panelPositionbox.add_actor(button.actor);
+    Main.panel.addToStatusArea('gmail-notify', button, 0, pos);
 };
 
 // Hide gmail button
