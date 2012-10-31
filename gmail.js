@@ -28,11 +28,11 @@ const Logger = Extension.imports.logger;
 const Signals = imports.signals;
 const Lang = imports.lang;
 const Soup = imports.gi.Soup;
-const Goa = imports.gi.Goa;
 const sess = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(sess,
                                         new Soup.ProxyResolverDefault());
 
+//const Goa = imports.gi.Goa;
 
 var GmailConnection = function () {
     this._init.apply(this,arguments);
